@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomy of a Drink - What goes into every coffee and cocktail</title>
+<meta name="description" content="Pick a drink. Watch it get built, layer by layer, pour by pour, with real sound. The interactive anatomy of every coffee and cocktail.">
+<meta property="og:title" content="Anatomy of a Drink">
+<meta property="og:description" content="Every layer. Every pour. Exactly what goes in - an interactive visual guide to coffee and cocktails.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='44' fill='%230b0a08'/%3E%3Ccircle cx='50' cy='50' r='40' fill='none' stroke='%23e09543' stroke-width='5'/%3E%3Ccircle cx='50' cy='50' r='24' fill='%23e09543'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="grain" aria-hidden="true"></div>
+<header id="topbar">
+  <a href="#/" class="brand" data-nav>ANATOMY<span class="brand-of">of a</span>DRINK</a>
+  <div class="topbar-right">
+    <nav id="mode-nav">
+      <a href="#/coffee" data-nav data-mode-link="coffee">COFFEE</a>
+      <a href="#/cocktails" data-nav data-mode-link="cocktails">COCKTAILS</a>
+    </nav>
+    <button id="sound-toggle" aria-label="Toggle sound" title="Sound">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" fill="currentColor" stroke="none"/><path class="snd-waves" d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/><line class="snd-off" x1="4" y1="4" x2="20" y2="20"/></svg>
+    </button>
+  </div>
+</header>
+<main id="app"></main>
+<footer id="footer">
+  <span>Built with agents by <a href="https://ankit-samriwal.vercel.app/" target="_blank" rel="noopener">Ankit Samriwal</a></span>
+  <span class="footer-dot">·</span>
+  <span>Every layer. Every pour. Exactly what goes in.</span>
+</footer>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

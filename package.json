@@ -1,0 +1,8 @@
+{
+  "name": "drink-anatomy",
+  "version": "1.0.0",
+  "description": "Anatomy of a Drink - an interactive visual guide to what goes into every coffee and cocktail",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "license": "MIT"
+}
