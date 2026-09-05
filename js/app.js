@@ -1,6 +1,7 @@
 import { DRINKS, ADDONS, MODE_META } from './data.js';
 import { createVessel } from './vessel.js';
 import * as SFX from './audio.js';
+import { CLIPS, showClip, hideClip, showSteam } from './clips.js';
 
 const app = document.getElementById('app');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -162,7 +163,9 @@ function renderBuild(mode, drink) {
       </div>
     </section>`;
 
-  const vessel = createVessel(document.getElementById('vessel-wrap'), drink.vessel, { temp: drink.temp });
+  const vesselWrap = document.getElementById('vessel-wrap');
+  const vessel = createVessel(vesselWrap, drink.vessel, { temp: drink.temp });
+  let steamVid = null;
   const rail = document.getElementById('step-rail');
   const buildBtn = document.getElementById('build-btn');
   const replayBtn = document.getElementById('replay-btn');
@@ -171,7 +174,7 @@ function renderBuild(mode, drink) {
   const ratioBar = document.getElementById('ratio-bar');
   const chosenAddons = new Set();
   let building = false, built = false, cancelled = false;
-  current.cleanup = () => { cancelled = true; };
+  current.cleanup = () => { cancelled = true; hideClip(steamVid); steamVid = null; };
 
   function paintRatio() {
     const layers = drink.steps.filter(s => s.ratio > 0);
@@ -202,8 +205,11 @@ function renderBuild(mode, drink) {
       card.classList.add('active');
       card.scrollIntoView({ block: 'nearest', behavior: REDUCED ? 'auto' : 'smooth' });
       SFX.play(step.sound, { type: step.type, temp: drink.temp });
+      const clipVid = showClip(vesselWrap, step.type);
+      if (!steamVid && drink.temp === 'hot' && (step.type === 'espresso' || step.type === 'water')) steamVid = showSteam(vesselWrap);
       const ms = vessel.addStep(step);
       await sleep(ms);
+      hideClip(clipVid);
       if (cancelled) return;
       card.classList.remove('active'); card.classList.add('done');
     }

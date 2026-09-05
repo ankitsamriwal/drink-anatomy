@@ -300,3 +300,25 @@ main { flex: 1; }
   *, *::before, *::after { animation-duration: .01s !important; transition-duration: .01s !important; }
   html { scroll-behavior: auto; }
 }
+
+/* real-footage step clips over the vessel stage */
+.vessel-wrap { position: relative; }
+.step-clip {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity .45s ease;
+  pointer-events: none;
+  z-index: 6;
+  filter: saturate(1.05) contrast(1.05);
+}
+.step-clip.on { opacity: 1; }
+.steam-clip {
+  mix-blend-mode: screen;
+  filter: brightness(.9);
+}
+.steam-clip.on { opacity: .55; }
