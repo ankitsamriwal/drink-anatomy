@@ -159,9 +159,44 @@ main { flex: 1; }
   background: radial-gradient(closest-side, var(--surface-2) 0%, var(--surface) 70%, transparent 100%);
   border-radius: 28px; padding: 20px;
   display: grid; place-items: center;
+  position: relative; overflow: hidden;
+}
+.vessel-wrap::before {
+  content: ''; position: absolute; inset: 0; border-radius: 28px; pointer-events: none;
+  background: radial-gradient(72% 46% at 50% 10%, rgba(255, 240, 220, .07), transparent 70%);
 }
 .vessel-svg { width: min(100%, 460px); height: auto; display: block; }
-.vessel-shadow { fill: #000; opacity: .45; }
+.vessel-shadow { fill: #000; opacity: .45; filter: blur(6px); }
+.rim-light { pointer-events: none; }
+.sheen { pointer-events: none; transform-box: fill-box; transform-origin: center; animation: sheen-drift 9s ease-in-out infinite alternate; }
+@keyframes sheen-drift {
+  from { transform: rotate(-28deg) translate(0, 0); opacity: .13; }
+  to { transform: rotate(-24deg) translate(10px, 6px); opacity: .2; }
+}
+.top-rim { pointer-events: none; }
+.ripple-ring {
+  transform-origin: center; transform-box: fill-box;
+  animation: ripple-x 1.15s ease-out forwards;
+}
+@keyframes ripple-x {
+  from { transform: scale(.35); opacity: .8; }
+  to { transform: scale(6.2); opacity: 0; }
+}
+.cold-mist { pointer-events: none; }
+.cond-drop { pointer-events: none; }
+@keyframes cond-twinkle { from { opacity: .55; } to { opacity: 1; } }
+.vessel-steam { pointer-events: none; filter: blur(5px); }
+.steam-wisp {
+  opacity: 0;
+  animation: steam-rise 3.4s ease-in-out infinite;
+}
+.vessel-steam.steam-full .steam-wisp { animation-duration: 2.9s; }
+@keyframes steam-rise {
+  0% { opacity: 0; transform: translateY(14px) scaleX(1); }
+  25% { opacity: .5; }
+  60% { opacity: .34; transform: translateY(-16px) scaleX(1.25); }
+  100% { opacity: 0; transform: translateY(-42px) scaleX(1.6); }
+}
 .vessel-svg.finished { animation: none; }
 .layer { }
 .ice-cube {

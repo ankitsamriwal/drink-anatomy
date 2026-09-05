@@ -162,7 +162,7 @@ function renderBuild(mode, drink) {
       </div>
     </section>`;
 
-  const vessel = createVessel(document.getElementById('vessel-wrap'), drink.vessel);
+  const vessel = createVessel(document.getElementById('vessel-wrap'), drink.vessel, { temp: drink.temp });
   const rail = document.getElementById('step-rail');
   const buildBtn = document.getElementById('build-btn');
   const replayBtn = document.getElementById('replay-btn');
@@ -201,7 +201,7 @@ function renderBuild(mode, drink) {
       const card = rail.querySelector(`[data-step="${i}"]`);
       card.classList.add('active');
       card.scrollIntoView({ block: 'nearest', behavior: REDUCED ? 'auto' : 'smooth' });
-      SFX.play(step.sound);
+      SFX.play(step.sound, { type: step.type, temp: drink.temp });
       const ms = vessel.addStep(step);
       await sleep(ms);
       if (cancelled) return;
@@ -231,7 +231,7 @@ function renderBuild(mode, drink) {
       return;
     }
     chosenAddons.add(id); btn.classList.add('active');
-    SFX.play(ADDONS[id].sound);
+    SFX.play(ADDONS[id].sound, { type: ADDONS[id].visual, temp: drink.temp });
     const ms = vessel.addAddon(ADDONS[id]);
     await sleep(Math.min(ms, 400));
     if (built) paintRecipe();
