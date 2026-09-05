@@ -1,7 +1,7 @@
 import { DRINKS, ADDONS, MODE_META } from './data.js';
 import { createVessel } from './vessel.js';
 import * as SFX from './audio.js';
-import { showClip, hideClip, showSteam, preloadClips } from './clips.js';
+import { CLIPS, showClip, hideClip, showSteam, preloadClips, releaseClips } from './clips.js';
 
 const app = document.getElementById('app');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -165,8 +165,11 @@ function renderBuild(mode, drink) {
 
   const vesselWrap = document.getElementById('vessel-wrap');
   const vessel = createVessel(vesselWrap, drink.vessel, { temp: drink.temp });
-  // fetch this drink's clips into memory now so each step's footage paints instantly
-  preloadClips(drink.steps.map(s => s.type), { steam: drink.temp === 'hot' });
+  preloadClips(drink.steps.map(s => s.type), drink.temp === 'hot');
+  // fixed lens treatment above every clip (vignette + consistent light direction)
+  const grade = document.createElement('div');
+  grade.className = 'clip-grade';
+  vesselWrap.appendChild(grade);
   let steamVid = null;
   const rail = document.getElementById('step-rail');
   const buildBtn = document.getElementById('build-btn');
@@ -176,7 +179,7 @@ function renderBuild(mode, drink) {
   const ratioBar = document.getElementById('ratio-bar');
   const chosenAddons = new Set();
   let building = false, built = false, cancelled = false;
-  current.cleanup = () => { cancelled = true; hideClip(steamVid); steamVid = null; };
+  current.cleanup = () => { cancelled = true; hideClip(steamVid); steamVid = null; releaseClips(); };
 
   function paintRatio() {
     const layers = drink.steps.filter(s => s.ratio > 0);
