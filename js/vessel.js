@@ -14,6 +14,8 @@ export const VESSELS = {
   copper:     { wall: 168, liquid: 148, wallColor: '#8a5a2e', wallWidth: 9, handle: true },
   rocks:      { wall: 158, liquid: 136, wallColor: '#5a5a52', wallWidth: 9, handle: false },
   bomb:       { wall: 178, liquid: 158, wallColor: '#5a5a52', wallWidth: 5, handle: false },
+  wine:       { wall: 182, liquid: 166, wallColor: '#5a5a52', wallWidth: 3, handle: false },
+  hurricane:  { wall: 172, liquid: 154, wallColor: '#5a5a52', wallWidth: 5, handle: false },
 };
 
 export const STEP_MS = REDUCED ? 60 : 0; // computed per type below
@@ -205,6 +207,10 @@ export function createVessel(container, vesselType) {
       el('line', { x1: gx - 34, y1: gy - 20, x2: gx + 34, y2: gy + 20, stroke: '#c8b888', 'stroke-width': 3 }, g);
       el('circle', { cx: gx, cy: gy, r: 13, fill: '#7a8a3a' }, g);
       el('circle', { cx: gx, cy: gy, r: 5, fill: '#c85a3a' }, g);
+    } else if (kind === 'garnish-cherry') {
+      el('path', { d: `M ${gx - 4} ${gy - 24} Q ${gx + 8} ${gy - 32} ${gx + 14} ${gy - 20}`, fill: 'none', stroke: '#6a4a2a', 'stroke-width': 3 }, g);
+      el('circle', { cx: gx, cy: gy, r: 13, fill: '#a81c2a', stroke: '#6e1018', 'stroke-width': 2 }, g);
+      el('circle', { cx: gx - 4, cy: gy - 4, r: 4, fill: '#d86a72' }, g);
     }
     // straw for tall drinks
     if (kind === 'straw') {
@@ -287,7 +293,7 @@ export function createVessel(container, vesselType) {
         case 'scoop': dollop(step.color, 0.5); return DUR.thud;
         case 'shotglass': shotGlassDrop(); return DUR.pour;
         case 'drop': dropShot(); return DUR.splash;
-        case 'garnish-lime': case 'garnish-orange': case 'garnish-mint': case 'garnish-olive':
+        case 'garnish-lime': case 'garnish-orange': case 'garnish-mint': case 'garnish-olive': case 'garnish-cherry':
           garnish(t); return DUR.blip;
         default: addLiquidLayer(step); return DUR.pour;
       }
