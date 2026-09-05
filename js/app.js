@@ -1,7 +1,7 @@
 import { DRINKS, ADDONS, MODE_META } from './data.js';
 import { createVessel } from './vessel.js';
 import * as SFX from './audio.js';
-import { CLIPS, showClip, hideClip, showSteam } from './clips.js';
+import { showClip, hideClip, showSteam, preloadClips } from './clips.js';
 
 const app = document.getElementById('app');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -165,6 +165,8 @@ function renderBuild(mode, drink) {
 
   const vesselWrap = document.getElementById('vessel-wrap');
   const vessel = createVessel(vesselWrap, drink.vessel, { temp: drink.temp });
+  // fetch this drink's clips into memory now so each step's footage paints instantly
+  preloadClips(drink.steps.map(s => s.type), { steam: drink.temp === 'hot' });
   let steamVid = null;
   const rail = document.getElementById('step-rail');
   const buildBtn = document.getElementById('build-btn');

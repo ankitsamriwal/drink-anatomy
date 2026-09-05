@@ -1,6 +1,11 @@
 // Real stock-footage clips (Pexels / Mixkit, free commercial licenses) hosted on Vercel Blob.
 // Each maps a build-step type to a short looping clip shown over the vessel stage.
 // Canvas rendering stays underneath as fallback - if a clip 404s or stalls, the layer still draws.
+//
+// Clips are fetched ONCE per drink page, as soon as the page mounts, and cached as in-memory
+// blob: URLs. Playing from memory is what makes each step's own clip paint the instant the
+// step starts - a fresh network fetch per step used to arrive too late (or stall entirely),
+// so the only footage visibly playing was whatever had managed to load first.
 const BASE = 'https://sof3wdyy3sm20bjl.public.blob.vercel-storage.com';
 export const CLIPS = {
   espresso: `${BASE}/espresso.mp4`,
@@ -27,13 +32,30 @@ export const CLIPS = {
 };
 export const STEAM_CLIP = `${BASE}/steam.mp4`;
 
-// Show a clip over the vessel stage. Returns the video element (null on failure).
-export function showClip(container, type) {
-  const src = CLIPS[type];
-  if (!src || !container) return null;
+// url -> Promise resolving to a blob: object URL (or the remote URL itself as fallback).
+const clipCache = new Map();
+function clipURL(url) {
+  if (!clipCache.has(url)) {
+    clipCache.set(url, fetch(url)
+      .then(r => { if (!r.ok) throw new Error(`clip ${r.status}`); return r.blob(); })
+      .then(b => URL.createObjectURL(b))
+      .catch(() => url));
+  }
+  return clipCache.get(url);
+}
+
+// Start downloading the clips this drink will need. Call when the build view mounts.
+export function preloadClips(types, { steam = false } = {}) {
+  const urls = new Set();
+  (types || []).forEach(t => { if (CLIPS[t]) urls.add(CLIPS[t]); });
+  if (steam) urls.add(STEAM_CLIP);
+  urls.forEach(u => clipURL(u));
+}
+
+function makeClip(container, className, urlPromise) {
+  if (!container) return null;
   const v = document.createElement('video');
-  v.className = 'step-clip';
-  v.src = src;
+  v.className = className;
   v.muted = true;
   v.loop = true;
   v.playsInline = true;
@@ -41,9 +63,20 @@ export function showClip(container, type) {
   v.preload = 'auto';
   v.addEventListener('error', () => v.remove());
   container.appendChild(v);
-  requestAnimationFrame(() => v.classList.add('on'));
-  v.play().catch(() => {});
+  urlPromise.then(url => {
+    if (!v.isConnected) return;
+    v.src = url;
+    v.play().catch(() => {});
+    requestAnimationFrame(() => v.classList.add('on'));
+  });
   return v;
+}
+
+// Show a clip over the vessel stage. Returns the video element (null on failure).
+export function showClip(container, type) {
+  const src = CLIPS[type];
+  if (!src) return null;
+  return makeClip(container, 'step-clip', clipURL(src));
 }
 
 export function hideClip(v) {
@@ -54,18 +87,5 @@ export function hideClip(v) {
 
 // Ambient steam loop for hot drinks - runs for the whole build view.
 export function showSteam(container) {
-  if (!container) return null;
-  const v = document.createElement('video');
-  v.className = 'step-clip steam-clip';
-  v.src = STEAM_CLIP;
-  v.muted = true;
-  v.loop = true;
-  v.playsInline = true;
-  v.setAttribute('playsinline', '');
-  v.preload = 'auto';
-  v.addEventListener('error', () => v.remove());
-  container.appendChild(v);
-  requestAnimationFrame(() => v.classList.add('on'));
-  v.play().catch(() => {});
-  return v;
+  return makeClip(container, 'step-clip steam-clip', clipURL(STEAM_CLIP));
 }
